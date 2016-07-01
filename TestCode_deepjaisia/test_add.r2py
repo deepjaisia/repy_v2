@@ -1,0 +1,3 @@
+log("Hello\n")
+a = testadd(2)
+log(a,"\n")

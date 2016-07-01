@@ -1,0 +1,2 @@
+a, b = httpsget("www.python.org")
+log (a, b)
