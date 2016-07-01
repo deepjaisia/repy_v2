@@ -120,6 +120,7 @@ import safe # Used to get SafeDict
 import tracebackrepy
 import virtual_namespace
 import test_add
+import test_https
 
 from exception_hierarchy import *
 
@@ -598,6 +599,10 @@ class DictOrSafeDict(ObjectProcessor):
 # the basis for what is populated in the user context. Anything function
 # defined here will be wrapped and made available to untrusted user code.
 USERCONTEXT_WRAPPER_INFO = {
+  'httpsget' :
+      {'func' : test_https.getStatusOfWebsite,
+       'args' : [Str()],
+       'return' : Str(), Str()},
   'testadd' :
       {'func' : test_add.test_addition,
        'args' : [Int()],
