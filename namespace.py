@@ -119,6 +119,7 @@ import nonportable
 import safe # Used to get SafeDict
 import tracebackrepy
 import virtual_namespace
+import test_add
 
 from exception_hierarchy import *
 
@@ -597,6 +598,10 @@ class DictOrSafeDict(ObjectProcessor):
 # the basis for what is populated in the user context. Anything function
 # defined here will be wrapped and made available to untrusted user code.
 USERCONTEXT_WRAPPER_INFO = {
+  'testadd' :
+      {'func' : test_add.test_addition,
+       'args' : [Int()],
+       'return' : Int()},
   'gethostbyname' :
       {'func' : emulcomm.gethostbyname,
        'args' : [Str()],
