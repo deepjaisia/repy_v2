@@ -602,7 +602,7 @@ USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.getStatusOfWebsite,
        'args' : [Str()],
-       'return' : Str(), Str()},
+       'return' : (Str(), Str())},
   'testadd' :
       {'func' : test_add.test_addition,
        'args' : [Int()],
