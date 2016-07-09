@@ -121,6 +121,7 @@ import tracebackrepy
 import virtual_namespace
 import test_add
 import test_https
+import httplib
 
 from exception_hierarchy import *
 
@@ -130,6 +131,9 @@ _saved_callable = callable
 _saved_hash = hash
 _saved_id = id
 
+httplib.getattr = getattr
+httplib.setattr = setattr
+httplib.hasattr = hasattr
 
 ##############################################################################
 # Public functions of this module to be called from the outside.
@@ -602,7 +606,7 @@ USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.getStatusOfWebsite,
        'args' : [Str()],
-       'return' : (Str(), Str())},
+       'return' : (Str(),Str())},
   'testadd' :
       {'func' : test_add.test_addition,
        'args' : [Int()],
