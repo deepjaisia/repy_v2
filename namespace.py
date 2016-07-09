@@ -131,10 +131,6 @@ _saved_callable = callable
 _saved_hash = hash
 _saved_id = id
 
-httplib.getattr = getattr
-httplib.setattr = setattr
-httplib.hasattr = hasattr
-
 ##############################################################################
 # Public functions of this module to be called from the outside.
 ##############################################################################
