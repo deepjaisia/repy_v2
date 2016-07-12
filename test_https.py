@@ -1,17 +1,25 @@
+# _*_ coding:utf-8 _*_
+
 import httplib
 import ssl
 from encodings import __init__
 
-httplib.getattr = getattr
+#httplib.getattr = getattr
 ssl.getattr = getattr
 
-httplib.hasattr = hasattr
+hasattr = hasattr
 #__init__.getattr = getattr
 
-def getStatusOfWebsite(urlOfWebsite):
+def main():
 
-  conn = httplib.HTTPSConnection(urlOfWebsite)
-  conn.request("GET", "/index.html")
-  responseToRequest = conn.getresponse()
-  return responseToRequest.status, responseToRequest.reason
+  status_of_website = get_status_of_website()
+  
+def get_status_of_website(url_of_website):
 
+  conn = httplib.HTTPSConnection(url_of_website)
+  conn.request("GET", "/")
+  response_to_request = conn.getresponse()
+  return response_to_request.status, response_to_request.reason
+
+if __name__ == '__main__':
+  main()

@@ -468,13 +468,13 @@ _BUILTIN_OK = [
   'PendingDeprecationWarning', 'ReferenceError', 'RuntimeError', 'RuntimeWarning',
   'StandardError', 'StopIteration', 'SyntaxError', 'SyntaxWarning', 'SystemError',
   'SystemExit', 'TabError', 'True', 'TypeError', 'UnboundLocalError',
-  'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeError',
+  'unicode', 'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeError',
   'UnicodeTranslateError', 'UserWarning', 'ValueError', 'Warning', 'ZeroDivisionError',
     
   'abs', 'bool', 'cmp', 'complex', 'dict', 'divmod', 'filter', 'float', 
   'frozenset', 'hex', 'id', 'int', 'len', 'list', 'long', 'map', 'max', 'min',
   'object', 'oct', 'pow', 'range', 'reduce', 'repr', 'round', 'set', 'slice',
-  'str', 'sum', 'tuple',  'xrange', 'zip','id',
+  'str', 'sum', 'tuple', 'xrange', 'zip', 'id',
     
   #Added for repyv2
   'isinstance', 'BaseException', 'WindowsError', 'type', 'issubclass',
@@ -521,13 +521,18 @@ def _builtin_init():
     # even if the name is defined in both, there must be a security reason
     # why it was supposed to be replaced, and not just allowed.
     if builtin in _BUILTIN_REPLACE:
+      print "Hello1"
       replacewith = _BUILTIN_REPLACE[builtin]
-    elif builtin in _BUILTIN_OK: 
-     replacewith = __builtin__.__dict__[builtin]
+    elif builtin in _BUILTIN_OK:
+      print "Hello2" 
+      replacewith = __builtin__.__dict__[builtin]
+      print replacewith
     elif builtin in _BUILTIN_STR:
+      print "Hello3"
       replacewith = ''
     else:
       # Replace the function with our exception-raising variant
+      print "Hello4"
       replacewith = _replace_unsafe_builtin(builtin)
     _builtin_globals[builtin] = replacewith
 

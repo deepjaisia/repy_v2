@@ -600,7 +600,7 @@ class DictOrSafeDict(ObjectProcessor):
 # defined here will be wrapped and made available to untrusted user code.
 USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
-      {'func' : test_https.getStatusOfWebsite,
+      {'func' : test_https.get_status_of_website,
        'args' : [Str()],
        'return' : (Str(),Str())},
   'testadd' :
@@ -1179,6 +1179,7 @@ class NamespaceAPIFunctionWrapper(object):
         # after the check.
         args_to_check = args[1:]
       else:
+        print "Hello"
         args_to_check = args
 
       if len(args_to_check) != len(self.__args):
@@ -1201,6 +1202,7 @@ class NamespaceAPIFunctionWrapper(object):
       else:
         func_to_call = self.__func
         if self.__is_method:
+          #print "Hello"
           # Sanity check the object we're adding back in as the "self" argument.
           if not isinstance(args[0], (NamespaceObjectWrapper, emulfile.emulated_file,
                                       emulcomm.EmulatedSocket, emulcomm.TCPServerSocket,
@@ -1213,7 +1215,9 @@ class NamespaceAPIFunctionWrapper(object):
           args_to_use = [args[0]] + args_copy
         else:
           args_to_use = args_copy
-      
+          print "Hello"
+
+      #print "Hello"
       retval = func_to_call(*args_to_use)
 
       return self._process_retval(retval)
