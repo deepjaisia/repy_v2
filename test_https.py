@@ -2,13 +2,12 @@
 
 import httplib
 import ssl
-from encodings import __init__
+import encodings
 
 #httplib.getattr = getattr
 ssl.getattr = getattr
 
-hasattr = hasattr
-#__init__.getattr = getattr
+encodings.hasattr = hasattr
 
 def main():
 
