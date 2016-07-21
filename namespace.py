@@ -120,8 +120,10 @@ import safe # Used to get SafeDict
 import tracebackrepy
 import virtual_namespace
 import test_add
+from test_https import *
 import test_https
 import httplib
+import encodings
 
 from exception_hierarchy import *
 
@@ -130,6 +132,7 @@ _saved_getattr = getattr
 _saved_callable = callable
 _saved_hash = hash
 _saved_id = id
+encodings.hasattr = hasattr
 
 ##############################################################################
 # Public functions of this module to be called from the outside.
@@ -602,7 +605,7 @@ USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.get_status_of_website,
        'args' : [Str()],
-       'return' : (Str(),Str())},
+       'return' : Str()},
   'testadd' :
       {'func' : test_add.test_addition,
        'args' : [Int()],
@@ -1179,7 +1182,7 @@ class NamespaceAPIFunctionWrapper(object):
         # after the check.
         args_to_check = args[1:]
       else:
-        print "Hello"
+        #print "Hello"
         args_to_check = args
 
       if len(args_to_check) != len(self.__args):
@@ -1215,9 +1218,9 @@ class NamespaceAPIFunctionWrapper(object):
           args_to_use = [args[0]] + args_copy
         else:
           args_to_use = args_copy
-          print "Hello"
+          #print "Hello"
 
-      #print "Hello"
+      print func_to_call
       retval = func_to_call(*args_to_use)
 
       return self._process_retval(retval)

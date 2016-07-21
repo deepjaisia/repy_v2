@@ -103,9 +103,12 @@ import __builtin__
 import nonportable  # This is to get the current runtime
 import repy_constants # This is to get our start-up directory
 import exception_hierarchy # This is for exception classes shared with tracebackrepy
+from encodings import *
+import encodings
 
 # Fix to make repy compatible with Python 2.7.2 on Ubuntu 11.10 (ticket #1049)
 subprocess.getattr = getattr
+encodings.hasattr = hasattr
 
 # Armon: This is how long we will wait for the external process
 # to validate the safety of the user code before we timeout, 
@@ -514,6 +517,7 @@ def _builtin_init():
   # Create a backup of the built-in functions
   #TODO: Perhaps pull this out of the function -  Is there a reason to do this more then once?
   _builtin_globals_backup = __builtin__.__dict__.copy()
+  print _builtin_globals_backup
   _builtin_globals = {}
 
   for builtin in __builtin__.__dict__.iterkeys():
@@ -521,20 +525,21 @@ def _builtin_init():
     # even if the name is defined in both, there must be a security reason
     # why it was supposed to be replaced, and not just allowed.
     if builtin in _BUILTIN_REPLACE:
-      print "Hello1"
+      #print _BUILTIN_REPLACE[builtin]
       replacewith = _BUILTIN_REPLACE[builtin]
     elif builtin in _BUILTIN_OK:
-      print "Hello2" 
+      #print "Hello2" 
       replacewith = __builtin__.__dict__[builtin]
       print replacewith
     elif builtin in _BUILTIN_STR:
-      print "Hello3"
+      #print "Hello3"
       replacewith = ''
     else:
       # Replace the function with our exception-raising variant
-      print "Hello4"
+      #print "Hello4"
       replacewith = _replace_unsafe_builtin(builtin)
     _builtin_globals[builtin] = replacewith
+    #print replacewith
 
   # Armon: Make SafeDict available
   _builtin_globals["SafeDict"] = get_SafeDict
@@ -590,6 +595,7 @@ def safe_run(code,context=None):
     
   try:
     context['__builtins__'] = _builtin_globals
+    #print context
     exec code in context
   finally:
     #_builtin_restore()
@@ -629,6 +635,7 @@ def safe_exec(code, context = None):
 
 # Functional constructor for SafeDict to allow us to safely map it into the repy context.
 def get_SafeDict(*args,**kwargs):
+  print SafeDict(*args,**kwargs)
   return SafeDict(*args,**kwargs)
 
 
