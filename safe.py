@@ -517,7 +517,7 @@ def _builtin_init():
   # Create a backup of the built-in functions
   #TODO: Perhaps pull this out of the function -  Is there a reason to do this more then once?
   _builtin_globals_backup = __builtin__.__dict__.copy()
-  print _builtin_globals_backup
+  #print _builtin_globals_backup
   _builtin_globals = {}
 
   for builtin in __builtin__.__dict__.iterkeys():
@@ -530,7 +530,7 @@ def _builtin_init():
     elif builtin in _BUILTIN_OK:
       #print "Hello2" 
       replacewith = __builtin__.__dict__[builtin]
-      print replacewith
+      #print replacewith
     elif builtin in _BUILTIN_STR:
       #print "Hello3"
       replacewith = ''
@@ -635,7 +635,7 @@ def safe_exec(code, context = None):
 
 # Functional constructor for SafeDict to allow us to safely map it into the repy context.
 def get_SafeDict(*args,**kwargs):
-  print SafeDict(*args,**kwargs)
+  #print SafeDict(*args,**kwargs)
   return SafeDict(*args,**kwargs)
 
 

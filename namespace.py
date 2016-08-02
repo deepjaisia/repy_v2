@@ -1220,7 +1220,7 @@ class NamespaceAPIFunctionWrapper(object):
           args_to_use = args_copy
           #print "Hello"
 
-      print func_to_call
+      #print func_to_call
       retval = func_to_call(*args_to_use)
 
       return self._process_retval(retval)
