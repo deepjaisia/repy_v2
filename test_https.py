@@ -20,12 +20,12 @@ ssl.delattr = delattr
 
   #status_of_website = get_status_of_website()
   
-def get_status_of_website(url_of_website):
+def get_status_of_website(url_of_website, port_number, web_page, method):
 
-  conn = httplib.HTTPSConnection(url_of_website)
-  conn.request("GET", "/")
+  conn = httplib.HTTPSConnection(url_of_website, port_number)
+  conn.request(method, web_page)
   response_to_request = conn.getresponse()
-  return response_to_request.reason, response_to_request.read() 
+  return response_to_request.status, response_to_request.read() 
 
 #if __name__ == '__main__':
   #main()

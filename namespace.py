@@ -604,7 +604,7 @@ class DictOrSafeDict(ObjectProcessor):
 USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.get_status_of_website,
-       'args' : [Str()],
+       'args' : [Str(), Int(), Str(), Str()],
        'return' : (Int(), Str())},
   'testadd' :
       {'func' : test_add.test_addition,
@@ -1126,6 +1126,7 @@ class NamespaceAPIFunctionWrapper(object):
 
   def _process_retval(self, retval):
 
+    #print retval
     try:
       # Allow the return value to be a tuple of processors.
       if type(retval) is tuple:

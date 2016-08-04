@@ -1,3 +1,3 @@
-a, b = httpsget('www.google.com')
+a, b = httpsget('localhost', 443, '/https_test.html', 'GET')
 log(a)
 log(b)
