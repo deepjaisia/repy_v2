@@ -1,3 +1,2 @@
-a, b = httpsget('localhost', 443, '/https_test.html', 'GET')
-log(a)
-log(b)
+a, b = httpsget('www.google.com', 443, 'GET', '/', 'F')
+log(a, b, "\n")
