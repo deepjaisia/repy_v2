@@ -3,6 +3,13 @@ import ssl
 import encodings
 import encodings.ascii
 import re
+import hashlib
+import sre_compile
+
+sre_compile.bytearray = bytearray
+sre_compile.bytes = bytes
+
+open = open
 
 re.enumerate = enumerate
 
@@ -21,28 +28,51 @@ ssl.delattr = delattr
 
   #status_of_website = get_status_of_website()
   
-def get_status_of_website(url_of_website, port_number, method, web_page, ssl_flag):
 
-#############################################################################################################
-## url_of_website: Is used to give the url of the website                                                  ##
-## port_number: Set to 80 if accessing the website using "http" and set to 443 if using "https"            ##
-## web_page: Give the webpage within the the website, leave blank or put "/" if no webpage                 ##
-## method: Method can be POST, GET or PUT. Depends on the user.                                            ## 
-## ssl_flag: Set ssl_flag == "T" if the user trusts unknown certificate of the party else ssl_flag == "F"  ##
-#############################################################################################################
+def cert_verifier(url_of_website, port_number):
+    
+  cert_from_server = ssl.get_server_certificate((url_of_website, port_number))
+  cert_from_server = str(cert_from_server)
+  with open('server.crt', 'r') as certfile:
+    cert_with_client = certfile.read().replace('/n', '')
+  cert_with_client = str(cert_with_client)
+  server_cert_hash = hashlib.sha1(cert_from_server)
+  client_cert_hash = hashlib.sha1(cert_with_client)
+  return cmp(server_cert_hash.digest(), client_cert_hash.digest())
+
+def get_status_of_website(url_of_website, port_number, method_used, web_page, ssl_flag):
+
+############################################################################
+## url_of_website : Is used to give the url of the website.               ##
+## port_number : Set to '443' for using "https".                          ##
+## web_page : Go to a specific webpage within the website server,         ##
+##            leave blank or put "/" if no webpage.                       ##
+## method_used : Method can be POST, GET or PUT. Depends on the user.     ## 
+## ssl_flag : Set ssl_flag == "T" if the user wants to trust self-signed  ##
+##            certificate of the webserver else select ssl_flag == "F"    ##
+##            if the user doesn't trust the certificate of the webserver  ##
+##            and wants the certificate to be verified.                   ##
+############################################################################
 
   if ssl_flag == "T":
-    context = ssl._create_unverified_context()
-    conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
-    conn.request(method, web_page)
-    response_to_request = conn.getresponse()
-    return response_to_request.status, response_to_request.read()
+    cert_verification = cert_verifier(url_of_website, port_number)
+    if cert_verification == 0:
+      context = ssl._create_unverified_context()
+      conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
+      conn.request(method_used, web_page)
+      response_to_request = conn.getresponse()
+      return response_to_request.status, response_to_request.read()
+    
+    else:
+      cert_not_verified = 34404
+      try_again = 'Please Try Again with a valid certificate'
+      return cert_not_verified, try_again
 
   else:
     conn = httplib.HTTPSConnection(url_of_website, port_number)
-    conn.request(method, web_page)
+    conn.request(method_used, web_page)
     response_to_request = conn.getresponse()
     return response_to_request.status, response_to_request.read()
-
+ 
 #if __name__ == '__main__':
   #main()
