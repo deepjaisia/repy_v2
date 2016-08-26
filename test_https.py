@@ -5,6 +5,7 @@ import encodings.ascii
 import re
 import hashlib
 import sre_compile
+import threading
 
 sre_compile.bytearray = bytearray
 sre_compile.bytes = bytes
@@ -28,17 +29,23 @@ ssl.delattr = delattr
 
   #status_of_website = get_status_of_website()
   
+lock1 = threading.Lock()
+lock2 = threading.Lock()
 
 def cert_verifier(url_of_website, port_number):
-    
+
+  lock2.acquire()  
+  
   cert_from_server = ssl.get_server_certificate((url_of_website, port_number))
   cert_from_server = str(cert_from_server)
   with open('server.crt', 'r') as certfile:
     cert_with_client = certfile.read().replace('/n', '')
   cert_with_client = str(cert_with_client)
-  server_cert_hash = hashlib.sha1(cert_from_server)
-  client_cert_hash = hashlib.sha1(cert_with_client)
+  server_cert_hash = hashlib.sha512(cert_from_server)
+  client_cert_hash = hashlib.sha512(cert_with_client)
   return cmp(server_cert_hash.digest(), client_cert_hash.digest())
+  
+  lock2.release()
 
 def get_status_of_website(url_of_website, port_number, method_used, web_page, ssl_flag):
 
@@ -54,25 +61,35 @@ def get_status_of_website(url_of_website, port_number, method_used, web_page, ss
 ##            and wants the certificate to be verified.                   ##
 ############################################################################
 
-  if ssl_flag == "T":
-    cert_verification = cert_verifier(url_of_website, port_number)
-    if cert_verification == 0:
-      context = ssl._create_unverified_context()
-      conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
-      conn.request(method_used, web_page)
-      response_to_request = conn.getresponse()
-      return response_to_request.status, response_to_request.read()
-    
-    else:
-      cert_not_verified = 34404
-      try_again = 'Please Try Again with a valid certificate'
-      return cert_not_verified, try_again
+  lock1.acquire()
 
+  if ssl_flag == "T":
+    try:
+      cert_verification = cert_verifier(url_of_website, port_number)
+      if cert_verification == 0:
+        context = ssl._create_unverified_context()
+        conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
+        conn.request(method_used, web_page)
+        response_to_request = conn.getresponse()
+        return response_to_request.status, response_to_request.read()
+    
+      else:
+        raise Exception   
+        #cert_not_verified = 34404
+        #try_again = 'Please Try Again with a valid certificate'
+        #return cert_not_verified, try_again
+
+    except Exception:
+      print "SSL Certificate not correct, please try again with a valid certificate"
+      return 1, "hello"
+  
   else:
     conn = httplib.HTTPSConnection(url_of_website, port_number)
     conn.request(method_used, web_page)
     response_to_request = conn.getresponse()
     return response_to_request.status, response_to_request.read()
- 
+
+  lock1.release() 
+
 #if __name__ == '__main__':
   #main()
