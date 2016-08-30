@@ -28,13 +28,15 @@ ssl.delattr = delattr
 #def main():
 
   #status_of_website = get_status_of_website()
+
+class SSLError(Exception):
+
+  def __init__(self):
+
+    print "The SSL Certificate that you have might not be correct. Please try again with the correct one."
   
-lock1 = threading.Lock()
-lock2 = threading.Lock()
 
 def cert_verifier(url_of_website, port_number):
-
-  lock2.acquire()  
   
   cert_from_server = ssl.get_server_certificate((url_of_website, port_number))
   cert_from_server = str(cert_from_server)
@@ -44,8 +46,7 @@ def cert_verifier(url_of_website, port_number):
   server_cert_hash = hashlib.sha512(cert_from_server)
   client_cert_hash = hashlib.sha512(cert_with_client)
   return cmp(server_cert_hash.digest(), client_cert_hash.digest())
-  
-  lock2.release()
+  #return 1
 
 def get_status_of_website(url_of_website, port_number, method_used, web_page, ssl_flag):
 
@@ -55,15 +56,13 @@ def get_status_of_website(url_of_website, port_number, method_used, web_page, ss
 ## web_page : Go to a specific webpage within the website server,         ##
 ##            leave blank or put "/" if no webpage.                       ##
 ## method_used : Method can be POST, GET or PUT. Depends on the user.     ## 
-## ssl_flag : Set ssl_flag == "T" if the user wants to trust self-signed  ##
-##            certificate of the webserver else select ssl_flag == "F"    ##
+## ssl_flag : Set ssl_flag == True if the user wants to trust self-signed ##
+##            certificate of the webserver else select ssl_flag == False  ##
 ##            if the user doesn't trust the certificate of the webserver  ##
 ##            and wants the certificate to be verified.                   ##
 ############################################################################
 
-  lock1.acquire()
-
-  if ssl_flag == "T":
+  if ssl_flag == True:
     try:
       cert_verification = cert_verifier(url_of_website, port_number)
       if cert_verification == 0:
@@ -74,12 +73,12 @@ def get_status_of_website(url_of_website, port_number, method_used, web_page, ss
         return response_to_request.status, response_to_request.read()
     
       else:
-        raise Exception   
+        raise SSLError  
         #cert_not_verified = 34404
         #try_again = 'Please Try Again with a valid certificate'
         #return cert_not_verified, try_again
 
-    except Exception:
+    except SSLError:
       print "SSL Certificate not correct, please try again with a valid certificate"
       return 1, "hello"
   
@@ -88,8 +87,6 @@ def get_status_of_website(url_of_website, port_number, method_used, web_page, ss
     conn.request(method_used, web_page)
     response_to_request = conn.getresponse()
     return response_to_request.status, response_to_request.read()
-
-  lock1.release() 
 
 #if __name__ == '__main__':
   #main()
