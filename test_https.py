@@ -36,8 +36,11 @@ class SSLError(Exception):
 
   def __init__(self):
 
-    print "The SSL Certificate that you have might not be correct. Please try again with the correct one."
+    print "The SSL Certificate that you have might is not correct. Please try again."
   
+  def cert_error():
+
+    print "The certificate is not correct. Please try again."
 
 class SSLFlagError(Exception):
 
@@ -72,7 +75,7 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
 ## Port Number is set to 443 by default for HTTPS Connection.             ##
 ############################################################################
   try:
-    if ssl_flag != True or False:
+    if ssl_flag not True or False:
       raise TypeError
 
   except TypeError:
@@ -86,6 +89,9 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
         conn = httplib.HTTPSConnection(url_of_website, 443, context=context)
         conn.request(method_used, web_page)
         response_to_request = conn.getresponse()
+        #file = open("newfile.txt", "w")
+        #file.write(response_to_request)
+        #file.close()
         #pickle.dump(response_to_request, open("save.zip", "wb"))
         return response_to_request.status, response_to_request.read()
     
@@ -97,6 +103,7 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
 
     except SSLError:
       raise SSLError
+      #raise SSLError
       #sys.exit()
       #print "SSL Certificate not correct, please try again with a valid certificate"
       #return 1, "hello"
