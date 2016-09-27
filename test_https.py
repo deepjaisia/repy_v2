@@ -74,12 +74,6 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
 ##            and wants the certificate to be verified.                   ##
 ## Port Number is set to 443 by default for HTTPS Connection.             ##
 ############################################################################
-  try:
-    if ssl_flag not True or False:
-      raise TypeError
-
-  except TypeError:
-  	raise TypeError
 
   if ssl_flag == True:
     try:
@@ -102,14 +96,12 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
         #return cert_not_verified, try_again
 
     except SSLError:
+      print "Hello"
       raise SSLError
       #raise SSLError
       #sys.exit()
       #print "SSL Certificate not correct, please try again with a valid certificate"
       #return 1, "hello"
-  
-    except TypeError:
-      raise TypeError
 
   else:
     conn = httplib.HTTPSConnection(url_of_website, 443)
