@@ -50,16 +50,15 @@ class SSLFlagError(Exception):
 
 def cert_verifier(url_of_website):
   
-  
-  #cert_from_server = ssl.get_server_certificate((url_of_website, 443))
-  #cert_from_server = str(cert_from_server)
-  #with open('server.crt', 'r') as certfile:
-    #cert_with_client = certfile.read().replace('/n', '')
-  #cert_with_client = str(cert_with_client)
-  #server_cert_hash = hashlib.sha512(cert_from_server)
-  #client_cert_hash = hashlib.sha512(cert_with_client)
-  #return cmp(server_cert_hash.digest(), client_cert_hash.digest())
-  return 0
+  cert_from_server = ssl.get_server_certificate((url_of_website, 443))
+  cert_from_server = str(cert_from_server)
+  with open('server.crt', 'r') as certfile:
+    cert_with_client = certfile.read().replace('/n', '')
+  cert_with_client = str(cert_with_client)
+  server_cert_hash = hashlib.sha512(cert_from_server)
+  client_cert_hash = hashlib.sha512(cert_with_client)
+  return cmp(server_cert_hash.digest(), client_cert_hash.digest())
+  #return 1
 
 def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
 
@@ -90,14 +89,14 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
         return response_to_request.status, response_to_request.read()
     
       else:
-        raise SSLError  
+        raise SSLError
         #cert_not_verified = 34404
         #try_again = 'Please Try Again with a valid certificate'
         #return cert_not_verified, try_again
 
     except SSLError:
-      print "Hello"
-      raise SSLError
+      #print "Hello"
+      raise "The certificate you provided is not correct, please try with a valid certificate."
       #raise SSLError
       #sys.exit()
       #print "SSL Certificate not correct, please try again with a valid certificate"
