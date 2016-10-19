@@ -48,11 +48,11 @@ class SSLFlagError(Exception):
 
     print "'%s' is not defined, please try again with 'True/False'" %flag
 
-def cert_verifier(url_of_website):
+def cert_verifier(url_of_website, server_certi):
   
   cert_from_server = ssl.get_server_certificate((url_of_website, 443))
   cert_from_server = str(cert_from_server)
-  with open('server.crt', 'r') as certfile:
+  with open(server_certi, 'r') as certfile:
     cert_with_client = certfile.read().replace('/n', '')
   cert_with_client = str(cert_with_client)
   server_cert_hash = hashlib.sha512(cert_from_server)
@@ -60,7 +60,7 @@ def cert_verifier(url_of_website):
   return cmp(server_cert_hash.digest(), client_cert_hash.digest())
   #return 1
 
-def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
+def get_status_of_website(url_of_website, method_used, web_page, server_certi, ssl_flag):
 
 ############################################################################
 ## url_of_website : Is used to give the url of the website.               ##
@@ -76,7 +76,7 @@ def get_status_of_website(url_of_website, method_used, web_page, ssl_flag):
 
   if ssl_flag == True:
     try:
-      cert_verification = cert_verifier(url_of_website)
+      cert_verification = cert_verifier(url_of_website, server_certi)
       if cert_verification == 0:
         context = ssl._create_unverified_context()
         conn = httplib.HTTPSConnection(url_of_website, 443, context=context)
