@@ -6,8 +6,8 @@ import re
 import hashlib
 import sre_compile
 import threading
-from OpenSSL import SSL
-import pickle
+#from OpenSSL import SSL
+#import pickle
 #import sys
 
 sre_compile.bytearray = bytearray
