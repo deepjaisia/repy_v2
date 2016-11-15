@@ -610,7 +610,7 @@ USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.get_status_of_website,
        'args' : [Str(), Str(), Str(), Str(), Bool()],
-       'return' : (Int(), Str(), Tuple())},
+       'return' : (Int(), Str(), List())},
   'testadd' :
       {'func' : test_add.test_addition,
        'args' : [Int()],
@@ -1228,6 +1228,7 @@ class NamespaceAPIFunctionWrapper(object):
 
       #print func_to_call
       retval = func_to_call(*args_to_use)
+      #print type(retval)
 
       return self._process_retval(retval)
 

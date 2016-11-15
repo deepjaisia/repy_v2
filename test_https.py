@@ -6,8 +6,7 @@ import re
 import hashlib
 import sre_compile
 import threading
-from OpenSSL import SSL
-import pickle
+#from OpenSSL import SSL
 #import sys
 
 sre_compile.bytearray = bytearray
@@ -34,19 +33,11 @@ ssl.delattr = delattr
 
 class SSLError(Exception):
 
-  def __init__(self):
-
-    print "The SSL Certificate that you have might is not correct. Please try again."
-  
-  def cert_error():
-
-    print "The certificate is not correct. Please try again."
+  pass
 
 class SSLFlagError(Exception):
 
-  def __init__(self, flag):
-
-    print "'%s' is not defined, please try again with 'True/False'" %flag
+  pass
 
 def cert_verifier(url_of_website, server_certi):
   
@@ -67,6 +58,9 @@ def get_status_of_website(url_of_website, method_used, web_page, server_certi, s
 ## web_page : Go to a specific webpage within the website server,         ##
 ##            leave blank or put "/" if no webpage.                       ##
 ## method_used : Method can be POST, GET or PUT. Depends on the user.     ## 
+## server_certi : This requires the user to save the server's certificate ##
+##                in the current directory it's and provide the name of   ##
+##                certificate when using the function call                ##
 ## ssl_flag : Set ssl_flag == True if the user wants to trust self-signed ##
 ##            certificate of the webserver else select ssl_flag == False  ##
 ##            if the user doesn't trust the certificate of the webserver  ##
@@ -82,31 +76,20 @@ def get_status_of_website(url_of_website, method_used, web_page, server_certi, s
         conn = httplib.HTTPSConnection(url_of_website, 443, context=context)
         conn.request(method_used, web_page)
         response_to_request = conn.getresponse()
-        #file = open("newfile.txt", "w")
-        #file.write(response_to_request)
-        #file.close()
-        #pickle.dump(response_to_request, open("save.zip", "wb"))
-        return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
+        return response_to_request.status, response_to_request.read(), list(response_to_request.getheaders())
     
       else:
-        raise SSLError
-        #cert_not_verified = 34404
-        #try_again = 'Please Try Again with a valid certificate'
-        #return cert_not_verified, try_again
-
-    except SSLError:
+        raise Exception
+        
+    except Exception:
       #print "Hello"
-      raise "The certificate you provided is not correct, please try with a valid certificate."
-      #raise SSLError
-      #sys.exit()
-      #print "SSL Certificate not correct, please try again with a valid certificate"
-      #return 1, "hello"
+      raise SSLError("The certificate you provided is not correct, please try with a valid certificate.")
 
   else:
     conn = httplib.HTTPSConnection(url_of_website, 443)
     conn.request(method_used, web_page)
     response_to_request = conn.getresponse()
-    return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
+    return response_to_request.status, response_to_request.read(), list(response_to_request.getheaders())
 
 #if __name__ == '__main__':
   #main()
