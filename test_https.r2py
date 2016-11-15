@@ -1,4 +1,4 @@
-a, b = httpsget('localhost', 'GET', '/test_https.py.zip', 'server.crt', True)
+a, b = httpsget('seattle.poly.edu', 'GET', '/', '', False)
 log(a, b, "\n")
 file2 = openfile('asdf', True)
 file2.writeat(b,0)

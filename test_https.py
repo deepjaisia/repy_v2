@@ -6,8 +6,8 @@ import re
 import hashlib
 import sre_compile
 import threading
-#from OpenSSL import SSL
-#import pickle
+from OpenSSL import SSL
+import pickle
 #import sys
 
 sre_compile.bytearray = bytearray
@@ -86,7 +86,7 @@ def get_status_of_website(url_of_website, method_used, web_page, server_certi, s
         #file.write(response_to_request)
         #file.close()
         #pickle.dump(response_to_request, open("save.zip", "wb"))
-        return response_to_request.status, response_to_request.read()
+        return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
     
       else:
         raise SSLError
@@ -106,7 +106,7 @@ def get_status_of_website(url_of_website, method_used, web_page, server_certi, s
     conn = httplib.HTTPSConnection(url_of_website, 443)
     conn.request(method_used, web_page)
     response_to_request = conn.getresponse()
-    return response_to_request.status, response_to_request.read()
+    return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
 
 #if __name__ == '__main__':
   #main()
