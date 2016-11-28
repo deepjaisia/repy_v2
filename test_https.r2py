@@ -1,4 +1,4 @@
-a, b, c = httpsget('seattle.poly.edu', 'GET', '/', '', False)
+a, b, c = httpsget('seattle.poly.edu', '/', '', False)
 log(a, b, c, "\n")
 file2 = openfile('asdf', True)
 file2.writeat(b,0)

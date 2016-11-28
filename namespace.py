@@ -412,13 +412,6 @@ class List(ValueProcessor):
 
 
 
-class Tuple(ValueProcessor):
-  """Allows Tuple. The tuple may contain anything."""
-
-  def check(self, val):
-    if not type(val) is tuple:
-      raise RepyArgumentError("Invalid type %s" % type(val))
-
 
 
 class Dict(ValueProcessor):
@@ -427,6 +420,8 @@ class Dict(ValueProcessor):
   def check(self, val):
     if not type(val) is dict:
       raise RepyArgumentError("Invalid type %s" % type(val))
+
+
 
 
 
@@ -455,6 +450,7 @@ class Func(ValueProcessor):
   def check(self, val):
     if not _is_in(type(val), [types.FunctionType, types.LambdaType, types.MethodType]):
       raise RepyArgumentError("Invalid type %s" % type(val))
+
 
 
 
@@ -609,7 +605,7 @@ class DictOrSafeDict(ObjectProcessor):
 USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.get_status_of_website,
-       'args' : [Str(), Str(), Str(), Str(), Bool()],
+       'args' : [Str(), Str(), Str(), Bool()],
        'return' : (Int(), Str(), List())},
   'testadd' :
       {'func' : test_add.test_addition,
