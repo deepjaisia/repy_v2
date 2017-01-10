@@ -1,5 +1,4 @@
 #pragma repy
-#pragma error
 
 new_dict = {1 : {1:'seattle.poly.edu', 2:'/', 3:'', 4: False},
             2 : {1:'www.google.com', 2:'/', 3:'', 4: True}}
@@ -12,5 +11,5 @@ for i in new_dict:
     httpsget(new_dict[i][1],new_dict[i][2],new_dict[i][3],new_dict[i][4])
     #httpsget('seattle.poly.edu', '/', '', True)
     pass
-  except error:
+  except Exception:
     log('Error caught')
