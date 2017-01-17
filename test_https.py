@@ -6,6 +6,7 @@ import re
 import hashlib
 import sre_compile
 import threading
+import exception_hierarchy
 #from OpenSSL import SSL
 #import sys
 
@@ -31,16 +32,16 @@ ssl.delattr = delattr
   #status_of_website = get_status_of_website()
 
 
-class SSLError(Exception):
+class SSLError(exception_hierarchy.RepyException):
 
   pass
 
 
-class SSLFlagError(Exception):
+class SSLFlagError(exception_hierarchy.RepyException):
 
   pass
 
-class CertiError(Exception):
+class CertiError(exception_hierarchy.RepyException):
 
   pass
 
@@ -80,27 +81,27 @@ def get_status_of_website(url_of_website, web_page, server_certi, ssl_flag):
     try:
       cert_verification = cert_verifier(url_of_website, server_certi)
       if cert_verification != 0:
-        raise Exception
+        raise RepyException
       context = ssl._create_unverified_context()
       conn = httplib.HTTPSConnection(url_of_website, 443, context=context)
       conn.request("GET", web_page)
       response_to_request = conn.getresponse()
       return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
      
-    except Exception:
+    except RepyException:
       #print "Hello"
       raise SSLError("The certificate you provided is not correct, please try again with a valid certificate.")
 
   elif ssl_flag == False:
     try:
       if server_certi:
-        raise Exception
+        raise RepyException
       conn = httplib.HTTPSConnection(url_of_website, 443)
       conn.request("GET", web_page)
       response_to_request = conn.getresponse()
       return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
 
-    except Exception:
+    except RepyException:
       raise CertiError("Please clear the 'Certificate' field and leave it blank in the call.")
 
   #else:
