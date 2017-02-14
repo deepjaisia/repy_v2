@@ -1,10 +1,10 @@
 #pragma repy
 #from exception_hierarchy import RepyException
 
-new_dict = [['seattle.poly.edu', '/', 'server.crt', True], ['www.google.com','/','', False], 
+new_dict = [['seattle.poly.edu', '/', '', False], ['www.google.com','/','', False], 
             ['localhost','/','server.crt', True], ['localhost','/test_https.py.zip', 'server.crt', True],
             ['localhost', '/test_https.py', 'server1.crt', True], ['localhost', '/test_http.py', 'server.crt', True],
-            ['localhst', '/test_https.py', 'server1.crt', True]]		
+            ['localhst', '/test_https.py', 'server.crt', True]]		
 
 for i in range(len(new_dict)):
   try:

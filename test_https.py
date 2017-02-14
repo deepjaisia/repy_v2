@@ -57,15 +57,20 @@ class CertiEmptyError(exception_hierarchy.RepyException):
 
 def cert_verifier(url_of_website, server_certi):
   
+  #Checks if the server is listening or not. if not listening an error is raised.
   try:  
     cert_from_server = str(ssl.get_server_certificate((url_of_website, 443)))
   except Exception:
-  	raise SSLError("The server you are looking for is not present.")
+    raise SSLError("The server you are looking for is not present.")
+
+  #Checks if the certificate provided by the user is present or not. If not raise an error is raised.
   try:
     if not(os.path.exists(server_certi)):
       raise CertiEmptyError("There is no such file present.")    
   except CertiEmptyError as e:
     raise
+
+  #Opens the server certificate provided by user and compares it byte by byte to the certificate fetched from the server. 
   with open(server_certi, 'r') as certfile:
     cert_with_client = certfile.read().replace('/n', '')
   cert_with_client = str(cert_with_client)
