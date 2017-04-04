@@ -605,7 +605,7 @@ class DictOrSafeDict(ObjectProcessor):
 USERCONTEXT_WRAPPER_INFO = {
   'httpsget' :
       {'func' : test_https.get_status_of_website,
-       'args' : [Str(), Str(), Str(), Bool()],
+       'args' : [Str(), Str(), Int(), Str(), Bool()],
        'return' : (Int(), Str(), List())},
   'testadd' :
       {'func' : test_add.test_addition,

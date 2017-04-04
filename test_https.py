@@ -8,6 +8,7 @@ import sre_compile
 import threading
 import exception_hierarchy
 import os
+import socket
 #from OpenSSL import SSL
 #import sys
 
@@ -55,18 +56,23 @@ class CertiEmptyError(exception_hierarchy.RepyException):
 
   pass
 
-def cert_verifier(url_of_website, server_certi):
+class ServerError(exception_hierarchy.RepyException):
+
+  pass
+
+def cert_verifier(url_of_website, port_number, server_certi):
   
   #Checks if the server is listening or not. if not listening an error is raised.
   try:  
-    cert_from_server = str(ssl.get_server_certificate((url_of_website, 443)))
-  except Exception:
-    raise SSLError("The server you are looking for is not present.")
+    cert_from_server = str(ssl.get_server_certificate((url_of_website, port_number)))
+  except socket.error, (err_no,err_msg):
+    if err_no == 111:
+      raise ServerError(err_msg + ", check if server is running properly or not.")
 
   #Checks if the certificate provided by the user is present or not. If not raise an error is raised.
   try:
     if not(os.path.exists(server_certi)):
-      raise CertiEmptyError("There is no such file present.")    
+      raise CertiEmptyError("There is no such certificate present, check directory again for self-signed certificate.")    
   except CertiEmptyError as e:
     raise
 
@@ -80,7 +86,7 @@ def cert_verifier(url_of_website, server_certi):
   #return 1
 
 
-def get_status_of_website(url_of_website, web_page, server_certi, ssl_flag):
+def get_status_of_website(url_of_website, web_page, port_number, server_certi, ssl_flag):
 
 ############################################################################
 ## url_of_website : Is used to give the url of the website.               ##
@@ -89,23 +95,27 @@ def get_status_of_website(url_of_website, web_page, server_certi, ssl_flag):
 ## server_certi : This requires the user to save the server's certificate ##
 ##                in the current directory it's and provide the name of   ##
 ##                certificate when using the function call                ##
+## port_number : Specify the port number to connect to, pass "0" if       ##
+##               you don't want to pass port number. Default set to 443   ##
 ## ssl_flag : Set ssl_flag == True if the user wants to trust self-signed ##
 ##            certificate of the webserver else select ssl_flag == False  ##
 ##            if the user doesn't trust the certificate of the webserver  ##
 ##            and wants the certificate to be verified.                   ##
 ##                                                                        ##
-## Port Number is set to 443 by default for HTTPS Connection.             ##
 ## Method used for fetching the information of the websites is set to     ##
 ## "GET" by default.                                                      ##
 ############################################################################
 
+  if port_number == 0:
+  	port_number = 443
+
   if ssl_flag == True:
     try:
-      cert_verification = cert_verifier(url_of_website, server_certi)
+      cert_verification = cert_verifier(url_of_website, port_number, server_certi)
       if cert_verification != 0:
         raise SSLError("The certificate you provided is not correct, please try again with the proper certificate.")
       context = ssl._create_unverified_context()
-      conn = httplib.HTTPSConnection(url_of_website, 443, context=context)
+      conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
       conn.request("GET", web_page)
       response_to_request = conn.getresponse()
       return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
@@ -117,13 +127,21 @@ def get_status_of_website(url_of_website, web_page, server_certi, ssl_flag):
     try:
       if server_certi:
         raise CertiError("Please leave the certificate field empty in the call.")
-      conn = httplib.HTTPSConnection(url_of_website, 443)
+      conn = httplib.HTTPSConnection(url_of_website, port_number)
       conn.request("GET", web_page)
       response_to_request = conn.getresponse()
       return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
 
     except CertiError as e:
       raise
-
+    except socket.gaierror, (err_no, err_msg):
+      if err_no == -2:
+        raise SSLError(err_msg)
+    except ssl.SSLError, (err_no, err_msg):
+      if err_no == 1:
+        raise CertiError("Certificate verification failed.")
+    except ssl.CertificateError as err_no:
+      raise CertiError(err_no)
+        
   elif ssl_flag != True or False:
     raise SSLFlagError("Improper Boolean Value entered.")

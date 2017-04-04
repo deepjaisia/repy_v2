@@ -1,4 +1,4 @@
-a, b, c = httpsget('seattle.poly.edu', '/', '', False)
-log(a, b, c, "\n")
+status_of_webpage, content_of_webpage, headers_of_webpage = httpsget('localhost', '/linux_api.py', 0, 'my_site.crt', True)
+log(status_of_webpage, content_of_webpage, headers_of_webpage, "\n")
 file2 = openfile('asdf', True)
-file2.writeat(b,0)
+file2.writeat(content_of_webpage, 0)
