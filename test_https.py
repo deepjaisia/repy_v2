@@ -60,14 +60,15 @@ class ServerError(exception_hierarchy.RepyException):
 
   pass
 
+
 def cert_verifier(url_of_website, port_number, server_certi):
   
   #Checks if the server is listening or not. if not listening an error is raised.
   try:  
     cert_from_server = str(ssl.get_server_certificate((url_of_website, port_number)))
-  except socket.error, (err_no,err_msg):
+  except socket.error as (err_no,err_msg):
     if err_no == 111:
-      raise ServerError(err_msg + ", check if server is running properly or not.")
+      raise ServerError(err_msg + ", check if the server with specified 'Port Number' is running properly or not.")
 
   #Checks if the certificate provided by the user is present or not. If not raise an error is raised.
   try:
@@ -132,16 +133,16 @@ def get_status_of_website(url_of_website, web_page, port_number, server_certi, s
       response_to_request = conn.getresponse()
       return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
 
-    except CertiError as e:
+    except CertiError:
       raise
-    except socket.gaierror, (err_no, err_msg):
+    except socket.gaierror as (err_no, err_msg):
       if err_no == -2:
         raise SSLError(err_msg)
-    except ssl.SSLError, (err_no, err_msg):
+    except ssl.SSLError as (err_no, err_msg):
       if err_no == 1:
         raise CertiError("Certificate verification failed.")
-    except ssl.CertificateError as err_no:
-      raise CertiError(err_no)
-        
+    except ssl.CertificateError as (err_msg, err_1):
+      raise CertiError(err_msg)
+    
   elif ssl_flag != True or False:
     raise SSLFlagError("Improper Boolean Value entered.")
