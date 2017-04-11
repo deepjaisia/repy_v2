@@ -109,40 +109,32 @@ def get_status_of_website(url_of_website, web_page, port_number, server_certi, s
 
   if port_number == 0:
   	port_number = 443
-
-  if ssl_flag == True:
-    try:
+  
+  try:
+    if ssl_flag == True:
       cert_verification = cert_verifier(url_of_website, port_number, server_certi)
       if cert_verification != 0:
         raise SSLError("The certificate you provided is not correct, please try again with the proper certificate.")
       context = ssl._create_unverified_context()
       conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
-      conn.request("GET", web_page)
-      response_to_request = conn.getresponse()
-      return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
-     
-    except SSLError as e:
-      raise
-
-  elif ssl_flag == False:
-    try:
+    elif ssl_flag == False:
       if server_certi:
-        raise CertiError("Please leave the certificate field empty in the call.")
+        raise CertiError("Please leave the certificate field empty in the call.")	
       conn = httplib.HTTPSConnection(url_of_website, port_number)
-      conn.request("GET", web_page)
-      response_to_request = conn.getresponse()
-      return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
 
-    except CertiError:
-      raise
-    except socket.gaierror as (err_no, err_msg):
-      if err_no == -2:
-        raise SSLError(err_msg)
-    except ssl.SSLError as (err_no, err_msg):
-      if err_no == 1:
-        raise CertiError("Certificate verification failed.")
-    except ssl.CertificateError as (err_msg, err_1):
-      raise CertiError(err_msg)
-    
-  elif ssl_flag != True or False:
-    raise SSLFlagError("Improper Boolean Value entered.")
+    conn.request("GET", web_page)
+    response_to_request = conn.getresponse()
+    return response_to_request.status, response_to_request.read(), response_to_request.getheaders()
+     
+  except SSLError:
+    raise
+  except CertiError:
+    raise
+  except socket.gaierror as (err_no, err_msg):
+    if err_no == -2:
+      raise SSLError(err_msg)
+  except ssl.SSLError as (err_no, err_msg):
+    if err_no == 1:
+      raise CertiError("Certificate verification failed.")
+  except ssl.CertificateError as (err_msg, err_1):
+    raise CertiError(err_msg)
