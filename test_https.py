@@ -9,11 +9,14 @@ import threading
 import exception_hierarchy
 import os
 import socket
-#from OpenSSL import SSL
+import OpenSSL
+from OpenSSL.crypto import has_expired
 #import sys
 
 sre_compile.bytearray = bytearray
 sre_compile.bytes = bytes
+
+has_expired.__import__ = __import__
 
 open = open
 
@@ -65,7 +68,8 @@ def cert_verifier(url_of_website, port_number, server_certi):
   
   #Checks if the server is listening or not. if not listening an error is raised.
   try:  
-    cert_from_server = str(ssl.get_server_certificate((url_of_website, port_number)))
+    cert_from_server = ssl.get_server_certificate((url_of_website, port_number))
+    cert_from_server_str = str(cert_from_server)
   except socket.error as (err_no,err_msg):
     if err_no == 111:
       raise ServerError(err_msg + ", check if the server with specified 'Port Number' is running properly or not.")
@@ -77,13 +81,26 @@ def cert_verifier(url_of_website, port_number, server_certi):
   except CertiEmptyError as e:
     raise
 
+  #Checks Server Certficate if it has been expired or not
+  x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert_from_server)
+  cert_verifier_param1 = x509.has_expired()
+
+  cert_verifier_param1 = True
+
   #Opens the server certificate provided by user and compares it byte by byte to the certificate fetched from the server. 
   with open(server_certi, 'r') as certfile:
     cert_with_client = certfile.read().replace('/n', '')
   cert_with_client = str(cert_with_client)
-  server_cert_hash = hashlib.sha512(cert_from_server)
+  server_cert_hash = hashlib.sha512(cert_from_server_str)
   client_cert_hash = hashlib.sha512(cert_with_client)
-  return cmp(server_cert_hash.digest(), client_cert_hash.digest())
+  cert_verifier_param2 = cmp(server_cert_hash.digest(), client_cert_hash.digest())
+  
+  if cert_verifier_param1 == True:
+    raise CertiError("The certificate received from the server has been expired")
+  elif cert_verifier_param2 != 0:
+    raise CertiError("The certificate received from the server and provided do not match, please try again.")
+  else:
+    return
   #return 1
 
 
@@ -112,9 +129,7 @@ def get_status_of_website(url_of_website, web_page, port_number, server_certi, s
   
   try:
     if ssl_flag == True:
-      cert_verification = cert_verifier(url_of_website, port_number, server_certi)
-      if cert_verification != 0:
-        raise SSLError("The certificate you provided is not correct, please try again with the proper certificate.")
+      cert_verifier(url_of_website, port_number, server_certi)
       context = ssl._create_unverified_context()
       conn = httplib.HTTPSConnection(url_of_website, port_number, context=context)
     elif ssl_flag == False:
@@ -135,6 +150,7 @@ def get_status_of_website(url_of_website, web_page, port_number, server_certi, s
       raise SSLError(err_msg)
   except ssl.SSLError as (err_no, err_msg):
     if err_no == 1:
+      #raise CertiError(err_msg)
       raise CertiError("Certificate verification failed.")
   except ssl.CertificateError as (err_msg, err_1):
     raise CertiError(err_msg)
