@@ -10,13 +10,13 @@ import exception_hierarchy
 import os
 import socket
 import OpenSSL
-from OpenSSL.crypto import has_expired
+from OpenSSL import crypto
 #import sys
 
 sre_compile.bytearray = bytearray
 sre_compile.bytes = bytes
 
-has_expired.__import__ = __import__
+crypto.__import__ = __import__
 
 open = open
 
