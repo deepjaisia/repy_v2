@@ -106,6 +106,7 @@
       in NamespaceAPIFunctionWrapper.wrapped_function).
 """
 
+
 import types
 
 # To check if objects are thread.LockType objects.
@@ -119,20 +120,17 @@ import nonportable
 import safe # Used to get SafeDict
 import tracebackrepy
 import virtual_namespace
-import test_add
-from test_https import *
+#from OpenSSL import crypto
 import test_https
 import httplib
-import encodings
-
 from exception_hierarchy import *
 
 # Save a copy of a few functions not available at runtime.
+#crypto.__import__ = __import__
 _saved_getattr = getattr
 _saved_callable = callable
 _saved_hash = hash
 _saved_id = id
-encodings.hasattr = hasattr
 
 ##############################################################################
 # Public functions of this module to be called from the outside.
@@ -607,10 +605,6 @@ USERCONTEXT_WRAPPER_INFO = {
       {'func' : test_https.get_status_of_website,
        'args' : [Str(), Str(), Int(), Str(), Bool()],
        'return' : (Int(), Str(), List())},
-  'testadd' :
-      {'func' : test_add.test_addition,
-       'args' : [Int()],
-       'return' : Int()},
   'gethostbyname' :
       {'func' : emulcomm.gethostbyname,
        'args' : [Str()],

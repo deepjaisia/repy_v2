@@ -1,4 +1,4 @@
-status_of_webpage, content_of_webpage, headers_of_webpage = httpsget('localhost', '/linux_api.py.tar.gz', 0, 'my_site.crt', True)
+status_of_webpage, content_of_webpage, headers_of_webpage = httpsget('localhost', '/linux_api.py.tar.gz', 443, 'my_site.crt', True)
 log(status_of_webpage, content_of_webpage, headers_of_webpage, "\n")
 new_file = openfile('asdf', True)
 new_file.writeat(content_of_webpage, 0)

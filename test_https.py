@@ -1,22 +1,29 @@
 import httplib
-import ssl
+import locale
+import re
+import datetime
+import _strptime
 import encodings
 from encodings import ascii
-import re
-import hashlib
 import sre_compile
+import ssl
+#import foo
+import hashlib
 import threading
 import exception_hierarchy
 import os
 import socket
-import OpenSSL
 from OpenSSL import crypto
 #import sys
 
+#datetime.datetime.strptime("","")
+
+locale.format = format
+
+re.__import__ = __import__
+
 sre_compile.bytearray = bytearray
 sre_compile.bytes = bytes
-
-crypto.__import__ = __import__
 
 open = open
 
@@ -82,10 +89,10 @@ def cert_verifier(url_of_website, port_number, server_certi):
     raise
 
   #Checks Server Certficate if it has been expired or not
-  x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert_from_server)
+  x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert_from_server)
   cert_verifier_param1 = x509.has_expired()
 
-  cert_verifier_param1 = True
+  #cert_verifier_param1 = False
 
   #Opens the server certificate provided by user and compares it byte by byte to the certificate fetched from the server. 
   with open(server_certi, 'r') as certfile:
